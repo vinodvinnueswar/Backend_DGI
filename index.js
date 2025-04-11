@@ -6,6 +6,7 @@ const vendorRoutes = require('./routes/vendorRoutes')
 const productRoutes = require('./routes/productRoutes')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const path = require('path')
 
 
 const app = express();
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(bodyParser.json())   
 app.use('/vendor', vendorRoutes);
 app.use('/product',productRoutes);
+app.use('/uploads', express.static('uploads'));
 
 
 app.listen(PORT, () => {

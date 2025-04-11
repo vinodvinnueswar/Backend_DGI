@@ -1,29 +1,29 @@
 
-const { error } = require('console');
+
 const Product = require('../model/Product');
 const Vendor = require('../model/Vendor')
 const multer = require('multer');
-const path = require('path');
-const { FILE } = require('dns');
+const path = require('path')
 
 const storage = multer.diskStorage({
-    destination: function(req, file , cb) {
-        cb(null , 'uploads/');
+    destination: function(req , file , cb) {
+        cb(null, 'uploads/'); // Destination folder where the uploaded images will be stored
     },
-    filename: function(req, file, cb){
-        cb(null, Date.now() + path.extname(file.originalname))
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)); // Generating a unique filename
     }
 });
-
-const upload = multer({storage : storage});
+const upload = multer({ storage: storage });
 
 
 const addProduct = async(req , res) => {
     try {
         const {productName, price, category,description} = req.body;
-        const image = req.file ? req.file.filename : undefined;
+       
+        const image = req.file ? req.file.filename : undefined
 
-        // const vendorId = req.params.vendorId;
+
+        const vendorId = req.params.vendorId;
         const vendor = await Vendor.findById(req.vendorId);
 
         if(!vendor){
@@ -31,7 +31,12 @@ const addProduct = async(req , res) => {
         }
         
         const product  = new Product({
-            productName,price,category,description,image,vendor: vendor._id
+            productName,
+            price,
+            category,
+            description,
+            image,
+            vendor: vendor._id
         })
         const savedProduct = await product.save();
 
@@ -76,7 +81,7 @@ const addProduct = async(req , res) => {
             
          const productId = req.params.productId;
     
-         const deleteProduct = await Product.findByIdAndDelete(productId[0]);
+         const deleteProduct = await Product.findByIdAndDelete(productId);
     
          if(!deleteProduct){
             return res.status(404).json({error : "No product found"})
@@ -96,3 +101,4 @@ const addProduct = async(req , res) => {
 
 
     module.exports = {addProduct : [upload.single('image'),addProduct] ,getProductByVendor , deleteProductById}
+// 

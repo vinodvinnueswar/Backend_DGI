@@ -24,9 +24,26 @@ const vendorRegister = async(req , res) => {
             email,
             password:hashedPassword,
         });
+
+        // const savedVendor = await newVendor.save();
+
+        // const vendorId = savedVendor._id
+
+        // vendor.push(savedVendor);
+
+        // await vendorId.save()
+
+
+        // const savedVendor = await vendor.save();
+
+        // const vendorId  = savedVendor._id;
+
+        // vendor.push(savedVendor)
+
+
       await newVendor.save();
       
-      res.status(201).json({message:"vendor registered successfully"});
+      res.status(201).json({message:"vendor registered successfully" , vendorId});
       console.log("Registered")
 
      } catch (error) {
@@ -48,7 +65,7 @@ const vendorLogin = async(req , res) => {
 
         const token = jwt.sign({vendorId: vendor._id },secretKey,{expiresIn : "1h"} )
 
-        const vendorId = vendor._id
+        const vendorId = vendor._id;
 
         res.status(200).json({success : "Login successfull",token ,vendorId})
         console.log(email , "This is token", token);
@@ -73,28 +90,26 @@ const getAllVendors = async(req,res) => {
     }
  
  }
+
  
- const getSingleVendor = async(req,res) =>{
-    
-    const vendorId = req.params.id;
-     try {
-         const vendor = await Vendor.findById(vendorId).populate('product');
-       if(!vendor){
-         return res.status(404).json({error:"Vendor not found"});
-       }
-       const vendorProductId = vendor.product[0]._id
-       res.status(200).json({vendor , vendorId , vendorProductId})
-       console.log(vendorProductId)
- 
- 
-     } catch (error) {
- 
-         console.log(error);
-         res.status(500).json({error:"Internal server error"});
-         
-     }
- 
- }
+ const getVendorById = async(req, res) => {
+    const vendorId = req.params.apple;
+
+    try {
+        const vendor = await Vendor.findById(vendorId).populate('product');
+        if (!vendor) {
+            return res.status(404).json({ error: "Vendor not found" })
+        }
+
+
+        const vendorProductId = vendor._id;
+        res.status(200).json({ vendorId, vendorProductId, vendor })
+        console.log(vendorProductId);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
  
 
-module.exports = {vendorRegister , vendorLogin , getAllVendors , getSingleVendor}
+module.exports = {vendorRegister , vendorLogin , getAllVendors , getVendorById , }
